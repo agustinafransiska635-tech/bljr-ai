@@ -1,0 +1,44 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_excel('Data timbang.xlsx')
+df['Diff'] = df['Gross_A'] - df['Gross_B']
+
+# Clustered bar (subset agar terbaca)
+subset = df.iloc[:20]  # ganti rentang sesuai kebutuhan
+x = range(len(subset))
+width = 0.4
+
+plt.figure(figsize=(12,5))
+plt.bar([i - width/2 for i in x], subset['Gross_A'], width=width, label='Gross_A')
+plt.bar([i + width/2 for i in x], subset['Gross_B'], width=width, label='Gross_B')
+plt.xticks(x, subset['Plat_No'], rotation=90)
+plt.ylabel('Berat')
+plt.title('Perbandingan Gross_A vs Gross_B per Plat (subset)')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Selisih per plat
+plt.figure(figsize=(12,5))
+colors = ['green' if d >= 0 else 'red' for d in df['Diff']]
+plt.bar(df['Plat_No'], df['Diff'], color=colors)
+plt.axhline(0, color='gray', linestyle='--')
+plt.xticks(rotation=90)
+plt.ylabel('Selisih (A - B)')
+plt.title('Selisih Gross per Plat')
+plt.tight_layout()
+plt.show()
+
+# Scatter A vs B + garis y=x
+plt.figure(figsize=(6,6))
+plt.scatter(df['Gross_B'], df['Gross_A'], alpha=0.7)
+minv = min(df['Gross_A'].min(), df['Gross_B'].min())
+maxv = max(df['Gross_A'].max(), df['Gross_B'].max())
+plt.plot([minv, maxv], [minv, maxv], 'k--', label='y = x')
+plt.xlabel('Gross_B')
+plt.ylabel('Gross_A')
+plt.title('Gross_A vs Gross_B')
+plt.legend()
+plt.tight_layout()
+plt.show()
